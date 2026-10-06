@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Villa Constitución — Asistencia</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=DM+Sans:wght@400;500;600;700&display=swap');
+:root{--navy:#111c2d;--green:#234c3a;--green2:#356f55;--gold:#d7b56d;--cream:#fffaf0;--paper:#fffdf8;--ink:#243128;--muted:#748078;--line:#e9dfcc}
+*{box-sizing:border-box}
+body{margin:0;font-family:'DM Sans',Arial,sans-serif;color:var(--ink);background:#101a28;min-height:100vh;overflow-x:hidden}
+body:before{content:"";position:fixed;inset:0;z-index:-3;background:radial-gradient(circle at 50% -10%,#416d55 0,#1d3d31 28%,#111c2d 65%); }
+body:after{content:"";position:fixed;width:700px;height:700px;left:50%;top:-430px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,#e7c98330 0,#d7b56d08 42%,transparent 70%);z-index:-2}
+header{position:relative;padding:22px 6%;display:flex;justify-content:space-between;align-items:center;color:#fff;background:#0d1725cc;border-bottom:1px solid #ffffff16;backdrop-filter:blur(18px);z-index:5}
+.brand{display:flex;gap:14px;align-items:center}.logo{width:55px;height:55px;border:1px solid #e7c98280;border-radius:18px;background:linear-gradient(145deg,#d8b76d,#92713c);display:grid;place-items:center;font-size:28px;color:#172319;box-shadow:0 10px 30px #0005}.brand h1{margin:0;font-family:Cinzel,Georgia,serif;font-size:22px;letter-spacing:1px}.brand small{opacity:.65}.top{font-size:12px;color:#d9dfd9}
+main{max-width:1240px;margin:auto;padding:0 22px 60px}
+.hero{position:relative;min-height:340px;padding:65px 4% 55px;display:flex;flex-direction:column;justify-content:center;overflow:hidden;text-align:center;color:#fff}
+.hero:before{content:"✦";position:absolute;font-size:270px;color:#d7b56d08;left:50%;top:-100px;transform:translateX(-50%);font-family:Georgia}.hero:after{content:"";position:absolute;left:10%;right:10%;bottom:0;height:1px;background:linear-gradient(90deg,transparent,#d7b56d66,transparent)}
+.hero .kicker{color:#e1c681;text-transform:uppercase;letter-spacing:5px;font-size:11px;font-weight:700}.hero h2{position:relative;font:500 clamp(42px,7vw,76px)/1.02 Cinzel,Georgia,serif;margin:15px 0 16px}.hero h2 span{color:#e2c67f}.hero p{max-width:650px;margin:auto;color:#cbd4ce;font-size:16px;line-height:1.7}
+.layout{display:grid;grid-template-columns:390px 1fr;gap:24px;margin-top:5px}
+.card{background:linear-gradient(145deg,#fffdf9,#f8f2e5);border:1px solid #ffffffb5;border-radius:25px;padding:24px;box-shadow:0 25px 70px #0005;position:relative;overflow:hidden}
+.card:before{content:"";position:absolute;width:130px;height:130px;border-radius:50%;right:-60px;top:-70px;background:#d7b56d12}
+.card h3{font-size:19px}.card-head{display:flex;align-items:center;gap:10px;margin-bottom:3px}.icon{width:36px;height:36px;border-radius:11px;background:#e8d5a9;color:#5e4a24;display:grid;place-items:center}
+label{display:block;font-size:12px;font-weight:700;margin:15px 0;color:#556158}input,select{width:100%;padding:13px 13px;border:1px solid #ddd3bf;border-radius:12px;margin-top:6px;font-size:14px;background:#fffdf9;color:var(--ink);outline:none;transition:.2s}input:focus,select:focus{border-color:#bd9a58;box-shadow:0 0 0 4px #d7b56d18}
+.save{background:linear-gradient(135deg,#356f55,#1f4b39);color:white;width:100%;margin-top:10px;padding:14px;border-radius:13px;box-shadow:0 12px 25px #234c3a30}.save:hover{transform:translateY(-1px)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:15px 0 20px}.stat{background:#f1eadb;padding:13px;border-radius:14px;border:1px solid #eadfc9}.stat b{font-size:24px;display:block;color:#2b5c45}.stat span{font-size:10px;color:#748078;text-transform:uppercase;letter-spacing:.4px}
+.list-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.date{font-size:11px;color:#748078}.person{border:1px solid #e8deca;border-radius:17px;padding:16px;margin-bottom:11px;background:#fffefb;box-shadow:0 7px 20px #2d3a2f09;transition:.2s}.person:hover{transform:translateY(-2px);box-shadow:0 12px 28px #2d3a2f15}
+.person-top{display:flex;justify-content:space-between;gap:10px}.person-name{font-weight:800;font-size:15px}.meta{font-size:11px;color:#7b857e;margin-top:5px}.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.actions button{font-size:11px;padding:8px 10px;border-radius:9px;cursor:pointer}.present{background:#dff0e5;color:#245d3f}.absent{background:#f5dddd;color:#9a3f3f}.just{background:#f6eacb;color:#7b6221}.late{background:#e2ebf5;color:#45637d}.delete{background:#eeeae3;color:#6b6b67}
+.badge{padding:6px 9px;border-radius:20px;font-size:10px;font-weight:800;white-space:nowrap}.b-present{background:#dff0e5;color:#245d3f}.b-absent{background:#f5dddd;color:#9a3f3f}.b-just{background:#f6eacb;color:#7b6221}.b-late{background:#e2ebf5;color:#45637d}
+.empty{text-align:center;padding:42px 15px;color:#89918b;border:1px dashed #d8ceba;border-radius:15px;background:#fffcf5}.toast{position:fixed;right:20px;bottom:20px;background:#1e4938;color:#fff;padding:14px 19px;border-radius:12px;display:none;box-shadow:0 15px 35px #0005;z-index:20}
+.reason{display:none}.reason.show{display:block}
+
+.welcome-glow{position:absolute;width:480px;height:480px;left:50%;top:-260px;transform:translateX(-50%);border-radius:50%;background:radial-gradient(circle,#d9b96f18,transparent 68%);pointer-events:none}
+.welcome-message{max-width:700px!important;color:#d5ddd7!important;font-size:16px!important;line-height:1.8!important}
+.welcome-panel{position:relative;max-width:720px;margin:30px auto 0;padding:22px 28px;display:flex;align-items:center;gap:18px;text-align:left;border:1px solid #d7b56d66;border-radius:20px;background:linear-gradient(135deg,#ffffff0d,#d7b56d0b);box-shadow:inset 0 1px #ffffff12,0 18px 50px #0003;backdrop-filter:blur(8px)}
+.cross{width:48px;height:48px;flex:none;border-radius:50%;display:grid;place-items:center;color:#172319;background:linear-gradient(145deg,#e2c77f,#aa8545);font-size:21px;box-shadow:0 7px 20px #0004}
+.verse-label{font-size:9px;letter-spacing:3px;color:#e1c681;font-weight:800;margin-bottom:7px}
+.verse{font:italic 19px/1.45 Georgia,serif;color:#fffaf0}
+.verse-ref{font-size:11px;color:#c9d1cb;margin-top:7px}
+.motivation{max-width:720px;margin:18px auto 0;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;color:#e1c681}
+.motivation strong{font-family:Cinzel,Georgia,serif;font-size:18px;font-weight:500;letter-spacing:.4px}
+.motivation small{grid-column:1/-1;color:#aebbb2;font-size:10px;letter-spacing:2px;text-transform:uppercase}
+
+
+.justify-overlay{position:fixed;inset:0;background:rgba(10,25,19,.70);backdrop-filter:blur(9px);display:none;align-items:center;justify-content:center;padding:20px;z-index:100}
+.justify-overlay.show{display:flex;animation:fadeIn .18s ease}
+.justify-modal{width:min(600px,100%);position:relative;background:linear-gradient(145deg,#fffdf8,#f7f0e2);border:1px solid #d8bd7b;border-radius:26px;padding:30px;box-shadow:0 30px 100px rgba(0,0,0,.38),0 0 0 1px rgba(255,255,255,.3) inset;animation:modalUp .22s ease}
+.modal-close{position:absolute;right:15px;top:14px;width:36px;height:36px;border-radius:50%;border:1px solid #dfd4c0;background:#fffaf0;color:#566159;font-size:25px;line-height:1;cursor:pointer;transition:.2s}
+.modal-close:hover{background:#e9dfca;color:#234c3a}
+.modal-title-row{display:flex;align-items:center;gap:15px;padding-right:35px}.modal-icon{width:54px;height:54px;flex:none;border-radius:17px;display:grid;place-items:center;background:linear-gradient(145deg,#e2c67f,#aa8446);color:#fffaf0;font-size:22px;box-shadow:0 10px 24px rgba(142,104,42,.22)}
+.modal-kicker{font-size:9px;letter-spacing:2.1px;color:#9a7736;font-weight:800;margin-bottom:4px}.justify-modal h3{font:500 28px Cinzel,Georgia,serif;color:#26352b;margin:0}
+.modal-person{display:flex;align-items:center;gap:10px;margin:23px 0 24px;padding:13px 15px;border:1px solid #d9bd7b;border-radius:14px;background:#fff7eb;color:#7d331b;font-size:15px;font-weight:600}.person-mini-icon{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:#234c3a;color:#fff;font-size:12px}
+.modal-label{font-size:13px;font-weight:800;color:#26352b}.modal-label textarea{display:block;width:100%;margin-top:8px;padding:14px;border:1.5px solid #d2c6af;border-radius:14px;background:#fffefa;color:#29372e;font:14px/1.55 'DM Sans',Arial,sans-serif;resize:vertical;outline:none;transition:.2s}.modal-label textarea:focus{border-color:#5d8a70;box-shadow:0 0 0 4px rgba(53,111,85,.13)}
+.reason-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}.reason-chips button{border:1px solid #dfe3e0;background:#eef2ef;color:#415148;border-radius:20px;padding:9px 13px;font-size:12px;font-weight:700;cursor:pointer;transition:.18s}.reason-chips button:hover{background:#e2ece6;border-color:#9bb5a5;color:#234c3a;transform:translateY(-1px)}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:24px}.modal-cancel,.modal-save{padding:13px 17px;border-radius:12px;font-weight:800;cursor:pointer;font-size:13px;transition:.2s}.modal-cancel{background:#e9eef1;color:#44535e;border:0}.modal-save{background:linear-gradient(135deg,#356f55,#1f4b39);color:white;border:0;box-shadow:0 10px 22px rgba(35,76,58,.25)}.modal-save:hover{transform:translateY(-1px)}
+.modal-shortcut{text-align:right;color:#7b827c;font-size:11px;margin-top:11px}.modal-shortcut strong{color:#536057}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes modalUp{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+@media(max-width:820px){.layout{grid-template-columns:1fr}.hero{padding-top:45px}.top{display:none}}
+@media(max-width:520px){header{padding:18px 20px}.brand h1{font-size:18px}.logo{width:47px;height:47px}.stats{gap:6px}.stat{padding:11px 8px}.hero h2{font-size:42px}}
+
+/* Mobile / tablet polish */
+html{scroll-behavior:smooth}
+button,input,select,textarea{font-family:inherit}
+button{border:0}
+.save,.actions button,.modal-cancel,.modal-save{min-height:44px}
+@media(max-width:820px){
+  main{padding:0 14px 40px}
+  header{padding:14px 16px}
+  .hero{min-height:auto;padding:42px 8px 38px}
+  .hero .kicker{letter-spacing:2.5px;font-size:9px}
+  .hero h2{font-size:clamp(34px,10vw,54px);margin:12px 0}
+  .welcome-message{font-size:14px!important;line-height:1.65!important}
+  .welcome-panel{margin-top:22px;padding:17px;gap:12px;border-radius:17px}
+  .cross{width:42px;height:42px;font-size:18px}
+  .verse{font-size:15px}
+  .motivation{margin-top:15px}
+  .motivation strong{font-size:15px}
+  .motivation small{font-size:8px;letter-spacing:1px}
+  .layout{grid-template-columns:1fr;gap:15px;margin-top:14px}
+  .card{padding:18px;border-radius:20px}
+  .card h3{font-size:17px}
+  .list-head{align-items:flex-start;gap:10px}
+  .date{font-size:10px}
+  .person{padding:14px;border-radius:15px}
+  .person-top{align-items:flex-start}
+  .person-name{font-size:14px;max-width:230px}
+  .actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .actions button{width:100%;font-size:11px;padding:9px 7px}
+  .badge{font-size:9px}
+  .stats{gap:6px;margin:12px 0 16px}
+  .stat{padding:10px 6px}
+  .stat b{font-size:21px}
+  .stat span{font-size:9px}
+  .justify-overlay{padding:10px}
+  .justify-modal{padding:21px 16px 17px;border-radius:21px;max-height:92vh;overflow:auto}
+  .modal-title-row{gap:10px}
+  .modal-icon{width:46px;height:46px;border-radius:14px}
+  .justify-modal h3{font-size:22px}
+  .modal-person{margin:17px 0;padding:11px 12px;font-size:13px}
+  .reason-chips{gap:6px}
+  .reason-chips button{padding:8px 10px;font-size:11px}
+  .modal-actions{display:grid;grid-template-columns:1fr 1.35fr;margin-top:18px}
+  .modal-cancel,.modal-save{width:100%;padding:12px 9px}
+  .modal-shortcut{display:none}
+}
+@media(max-width:390px){
+  .brand{gap:9px}.brand h1{font-size:16px}.brand small{font-size:10px}.logo{width:43px;height:43px;border-radius:14px;font-size:22px}
+  .hero h2{font-size:33px}
+  .welcome-panel{display:block;text-align:center}.cross{margin:0 auto 10px}.verse{font-size:14px}
+  .actions{grid-template-columns:1fr}
+  .person-top{gap:7px}.person-name{max-width:190px}
+}
+
+/* Supabase connection banner */
+.connection{display:none;margin:14px auto 0;max-width:720px;padding:10px 13px;border:1px solid #d7b56d55;border-radius:12px;background:#ffffff0b;color:#d9e0da;font-size:11px}
+.connection.show{display:block}
+.auth-overlay{position:fixed;inset:0;background:rgba(7,20,14,.82);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:16px;z-index:200}
+.auth-overlay.show{display:flex}
+.auth-card{width:min(420px,100%);background:linear-gradient(145deg,#fffdf8,#f7f0e2);border:1px solid #d8bd7b;border-radius:24px;padding:26px;box-shadow:0 30px 90px #0008}
+.auth-logo{width:54px;height:54px;border-radius:17px;margin-bottom:13px;display:grid;place-items:center;background:linear-gradient(145deg,#e2c67f,#aa8446);font-size:24px}
+.auth-card h2{font:500 27px Cinzel,Georgia,serif;margin:0;color:#26352b}.auth-card p{font-size:12px;color:#6f7972;line-height:1.55}.auth-card label{margin-top:12px}.auth-card input{margin-top:5px}.auth-btn{width:100%;padding:13px;border-radius:12px;background:linear-gradient(135deg,#356f55,#1f4b39);color:#fff;font-weight:800;margin-top:14px;cursor:pointer}.auth-error{color:#a23f3f;font-size:11px;margin-top:10px;min-height:16px}.logout{display:none;background:#ffffff12;color:#dfe7e1;border:1px solid #ffffff18;padding:8px 11px;border-radius:10px;font-size:11px;cursor:pointer}.logout.show{display:block}
+
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="logo">✦</div><div><h1>Villa Constitución</h1><small>Control de asistencia</small></div></div>
+ <div style="display:flex;align-items:center;gap:10px"><div class="top" id="today"></div><button class="logout" id="logoutBtn" onclick="logout()">Cerrar sesión</button></div>
+</header>
+
+<main>
+<section class="hero">
+  <div class="welcome-glow"></div>
+  <div class="kicker">UNA IGLESIA · UNA FAMILIA · UN PROPÓSITO</div>
+  <h2>Bienvenidos a<br><span>Villa Constitución</span></h2>
+  <p class="welcome-message">Qué alegría tenerte aquí. Cada persona, cada familia y cada encuentro forman parte de lo que Dios está haciendo entre nosotros.</p>
+
+  <div class="welcome-panel">
+    <div class="cross">✦</div>
+    <div>
+      <div class="verse-label">PALABRA DE HOY</div>
+      <div class="verse">“Mirad cuán bueno y cuán delicioso es habitar los hermanos juntos en armonía.”</div>
+      <div class="verse-ref">Salmos 133:1</div>
+    </div>
+  </div>
+
+  <div class="connection" id="connection">● Conectado a la base de datos de Villa Constitución</div>
+  <div class="motivation">
+    <span>✦</span>
+    <strong>Tu presencia importa.</strong>
+    <span>✦</span>
+    <small>Juntos crecemos · Juntos servimos · Juntos avanzamos</small>
+  </div>
+</section>
+
+<div class="layout">
+<section class="card">
+<div class="card-head"><div class="icon">✦</div><h3>Registrar asistencia</h3></div>
+<form id="form">
+<label>Nombre completo
+<input id="name" required placeholder="Ej. Juan Pérez">
+</label>
+<label>Grupo / ministerio
+<select id="group"><option>Miembro</option><option>Visitante</option><option>Jóvenes</option><option>Niños</option><option>Alabanza</option><option>Liderazgo</option></select>
+</label>
+<label>Servicio
+<select id="service"><option>Servicio general</option><option>Reunión de jóvenes</option><option>Escuela bíblica</option><option>CCDL</option><option>CMF</option><option>Otro</option></select>
+</label>
+<label>Estado inicial
+<select id="status" onchange="showReason()">
+<option value="Presente">✓ Presente</option>
+<option value="Ausente">✕ Inasistencia</option>
+<option value="Justificado">⚠ Justificado</option>
+
+</select>
+</label>
+<label id="reasonBox" class="reason">Motivo de justificación
+<input id="reason" placeholder="Ej. Trabajo, enfermedad, viaje">
+</label>
+<button class="save" type="submit">+ Guardar registro</button>
+</form>
+</section>
+
+<section class="card">
+<div class="list-head"><div><div class="card-head"><div class="icon">♟</div><h3>Asistencia de hoy</h3></div><div class="date" id="listCount">0 registros</div></div><div class="date" id="date2"></div></div>
+<div class="stats">
+<div class="stat"><b id="total">0</b><span>Total</span></div>
+<div class="stat"><b id="present">0</b><span>Presentes</span></div>
+<div class="stat"><b id="absent">0</b><span>Inasistencias</span></div>
+</div>
+<div id="list"></div>
+</section>
+</div>
+</main>
+
+<div class="justify-overlay" id="justifyOverlay">
+  <div class="justify-modal" role="dialog" aria-modal="true" aria-labelledby="justifyTitle">
+    <button class="modal-close" type="button" onclick="closeJustify()" aria-label="Cerrar">×</button>
+    <div class="modal-title-row">
+      <div class="modal-icon">⚠</div>
+      <div><div class="modal-kicker">VILLA CONSTITUCIÓN · ASISTENCIA</div><h3 id="justifyTitle">Justificar inasistencia</h3></div>
+    </div>
+    <div class="modal-person"><span class="person-mini-icon">♟</span><span id="justifyPerson"></span></div>
+    <label class="modal-label">Motivo de la justificación
+      <textarea id="justifyReason" rows="4" placeholder="Ej. Enfermedad, viaje, trabajo, emergencia familiar..." maxlength="220"></textarea>
+    </label>
+    <div class="reason-chips">
+      <button type="button" onclick="useReason('Enfermedad')">🤒 Enfermedad</button>
+      <button type="button" onclick="useReason('Viaje')">✈️ Viaje</button>
+      <button type="button" onclick="useReason('Trabajo')">💼 Trabajo</button>
+      <button type="button" onclick="useReason('Emergencia familiar')">🏠 Emergencia familiar</button>
+      <button type="button" onclick="useReason('Estudio')">📚 Estudio</button>
+      <button type="button" onclick="useReason('Salud')">🩺 Salud</button>
+    </div>
+    <div class="modal-actions">
+      <button class="modal-cancel" type="button" onclick="closeJustify()">Cancelar</button>
+      <button class="modal-save" type="button" onclick="saveJustification()">◉ &nbsp;Guardar justificación</button>
+    </div>
+    <div class="modal-shortcut">Atajo: <strong>Ctrl + Enter</strong> para guardar</div>
+  </div>
+</div>
+
+<div class="auth-overlay" id="authOverlay">
+  <div class="auth-card">
+    <div class="auth-logo">✦</div>
+    <h2>Acceso de administración</h2>
+    <p>Inicia sesión para administrar miembros y asistencias de Villa Constitución.</p>
+    <label>Correo electrónico<input id="authEmail" type="email" autocomplete="username" placeholder="correo@ejemplo.com"></label>
+    <label>Contraseña<input id="authPassword" type="password" autocomplete="current-password" placeholder="Tu contraseña"></label>
+    <button class="auth-btn" onclick="login()">Entrar</button>
+    <div class="auth-error" id="authError"></div>
+  </div>
+</div>
+<div class="toast" id="toast">Guardado</div>
+
+<script>
+const KEY='villa_constitucion_attendance_v2';
+let records=[];
+let supabaseClient=null;
+let isSupabase=false;
+let justifyIndex=null;
+
+const $=id=>document.getElementById(id);
+function today(){return new Date().toLocaleDateString('es-SV',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}
+$('today').textContent=today();$('date2').textContent=today();
+
+function configured(){return window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.url && window.SUPABASE_CONFIG.key && !window.SUPABASE_CONFIG.url.includes('TU_PROYECTO') && !window.SUPABASE_CONFIG.key.includes('TU_CLAVE')}
+function localLoad(){try{records=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){records=[]}}
+function localSave(){localStorage.setItem(KEY,JSON.stringify(records))}
+
+async function initApp(){
+  if(!configured()){
+    localLoad();
+    render();
+    return;
+  }
+  try{
+    supabaseClient=window.supabase.createClient(window.SUPABASE_CONFIG.url,window.SUPABASE_CONFIG.key);
+    isSupabase=true;
+    $('connection').classList.add('show');
+    const {data:{session}}=await supabaseClient.auth.getSession();
+    if(session){
+      $('logoutBtn').classList.add('show');
+      await loadToday();
+    }else{
+      $('authOverlay').classList.add('show');
+    }
+    supabaseClient.auth.onAuthStateChange((_event,session)=>{
+      if(session){$('authOverlay').classList.remove('show');$('logoutBtn').classList.add('show');loadToday()}
+      else{$('logoutBtn').classList.remove('show');$('authOverlay').classList.add('show')}
+    });
+  }catch(e){
+    console.error(e); localLoad(); render(); notify('Modo local activado');
+  }
+}
+
+async function login(){
+  const email=$('authEmail').value.trim(), password=$('authPassword').value;
+  $('authError').textContent='';
+  if(!email||!password){$('authError').textContent='Escribe tu correo y contraseña.';return}
+  const {error}=await supabaseClient.auth.signInWithPassword({email,password});
+  if(error)$('authError').textContent=error.message.includes('Invalid login')?'Correo o contraseña incorrectos.':error.message;
+}
+async function logout(){if(supabaseClient)await supabaseClient.auth.signOut()}
+
+async function loadToday(){
+  const day=new Date().toISOString().slice(0,10);
+  const {data,error}=await supabaseClient.from('asistencias').select('id,estado,motivo,hora,miembro_id,miembros(id,nombre,grupo,servicio)').eq('fecha',day).order('hora',{ascending:false});
+  if(error){console.error(error);notify('No se pudo cargar Supabase');return}
+  records=(data||[]).map(x=>({id:x.id,member_id:x.miembro_id,name:x.miembros?.nombre||'Sin nombre',group:x.miembros?.grupo||'Miembro',service:x.miembros?.servicio||'Servicio general',status:x.estado==='Justificado'?'Justificado':x.estado==='Ausente'?'Ausente':'Presente',reason:x.motivo||'',time:x.hora?new Date(x.hora).toLocaleTimeString('es-SV',{hour:'2-digit',minute:'2-digit'}):''}));
+  render();
+}
+
+function showReason(){const on=$('status').value==='Justificado';$('reasonBox').classList.toggle('show',on);$('reason').required=on}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function cls(s){return s==='Presente'?'b-present':s==='Ausente'?'b-absent':'b-just'}
+function render(){
+ const present=records.filter(x=>x.status==='Presente').length;
+ const absent=records.filter(x=>x.status==='Ausente'||x.status==='Justificado').length;
+ $('total').textContent=records.length;$('present').textContent=present;$('absent').textContent=absent;
+ $('listCount').textContent=records.length+' registro'+(records.length===1?'':'s');
+ const list=$('list');
+ if(!records.length){list.innerHTML='<div class="empty">No hay miembros registrados todavía.<br><br>Agrega el primero usando el formulario.</div>';return}
+ list.innerHTML=records.map((x,i)=>`<div class="person"><div class="person-top"><div><div class="person-name">${esc(x.name)}</div><div class="meta">${esc(x.group)} · ${esc(x.service)} · ${esc(x.time)}</div>${x.reason?'<div class="meta">Motivo: '+esc(x.reason)+'</div>':''}</div><span class="badge ${cls(x.status)}">${x.status}</span></div><div class="actions"><button class="present" onclick="setStatus(${i},'Presente')">✓ Presente</button><button class="absent" onclick="setStatus(${i},'Ausente')">✕ Inasistencia</button><button class="just" onclick="justify(${i})">⚠ Justificar</button><button class="delete" onclick="removePerson(${i})">Eliminar</button></div></div>`).join('');
+}
+
+async function addLocal(){
+ const name=$('name').value.trim();
+ records.unshift({name,group:$('group').value,service:$('service').value,status:$('status').value,reason:$('reason').value.trim(),time:new Date().toLocaleTimeString('es-SV',{hour:'2-digit',minute:'2-digit'})});
+ localSave();render();
+}
+async function addSupabase(){
+ const name=$('name').value.trim(), group=$('group').value, service=$('service').value, status=$('status').value, reason=$('reason').value.trim();
+ const {data:existing,error:findError}=await supabaseClient.from('miembros').select('id').ilike('nombre',name).limit(1).maybeSingle();
+ if(findError)throw findError;
+ let memberId=existing?.id;
+ if(!memberId){const {data:m,error:e}=await supabaseClient.from('miembros').insert({nombre:name,grupo:group,servicio:service}).select('id').single();if(e)throw e;memberId=m.id}
+ const day=new Date().toISOString().slice(0,10);
+ const {error:e}=await supabaseClient.from('asistencias').upsert({miembro_id:memberId,fecha:day,estado:status,motivo:status==='Justificado'?reason:null,hora:new Date().toISOString()},{onConflict:'miembro_id,fecha'});
+ if(e)throw e;
+ await loadToday();
+}
+
+$('form').addEventListener('submit',async function(e){
+ e.preventDefault();e.stopPropagation();
+ const name=$('name').value.trim();if(!name){$('name').focus();return false}
+ try{if(isSupabase)await addSupabase();else await addLocal();this.reset();$('status').value='Presente';showReason();notify('¡Miembro agregado correctamente! ✓')}
+ catch(err){console.error(err);notify('No se pudo guardar el registro')}
+ return false;
+});
+
+async function setStatus(i,status){
+ try{
+  if(isSupabase){const r=records[i];const {error}=await supabaseClient.from('asistencias').update({estado:status,motivo:null}).eq('id',r.id);if(error)throw error;await loadToday()}
+  else{records[i].status=status;if(status!=='Justificado')records[i].reason='';localSave();render()}
+  notify(status+' registrado');
+ }catch(e){console.error(e);notify('No se pudo actualizar')}
+}
+function justify(i){justifyIndex=i;$('justifyPerson').textContent=records[i].name+' · '+records[i].group;$('justifyReason').value=records[i].reason||'';$('justifyOverlay').classList.add('show');setTimeout(()=>$('justifyReason').focus(),100)}
+function useReason(reason){$('justifyReason').value=reason;$('justifyReason').focus()}
+function closeJustify(){justifyIndex=null;$('justifyOverlay').classList.remove('show')}
+async function saveJustification(){
+ if(justifyIndex===null)return;const reason=$('justifyReason').value.trim();if(!reason){$('justifyReason').focus();return}
+ try{
+  if(isSupabase){const r=records[justifyIndex];const {error}=await supabaseClient.from('asistencias').update({estado:'Justificado',motivo:reason}).eq('id',r.id);if(error)throw error;await loadToday()}
+  else{records[justifyIndex].status='Justificado';records[justifyIndex].reason=reason;localSave();render()}
+  closeJustify();notify('Justificación registrada ✓');
+ }catch(e){console.error(e);notify('No se pudo guardar la justificación')}
+}
+async function removePerson(i){
+ if(!confirm('¿Eliminar a '+records[i].name+' de la asistencia de hoy?'))return;
+ try{
+  if(isSupabase){const {error}=await supabaseClient.from('asistencias').delete().eq('id',records[i].id);if(error)throw error;await loadToday()}
+  else{records.splice(i,1);localSave();render()}
+  notify('Registro eliminado')
+ }catch(e){console.error(e);notify('No se pudo eliminar')}
+}
+function notify(t){$('toast').textContent=t;$('toast').style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>$('toast').style.display='none',1800)}
+$('justifyReason').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();saveJustification()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&$('justifyOverlay').classList.contains('show'))closeJustify()});
+showReason();
+initApp();
+</script>
+</body>
+</html>
