@@ -667,7 +667,7 @@ function render(){
  $('listCount').textContent=records.length+' miembro'+(records.length===1?'':'s')+' · '+registered+' con registro hoy';
  const list=$('list');
  if(!records.length){list.innerHTML='<div class="empty">No hay miembros registrados todavía.<br><br>Agrega el primero usando el formulario.</div>';return}
- list.innerHTML=records.map((x,i)=>`<div class="person"><div class="person-top"><div><div class="person-name">${esc(x.name)}</div><div class="meta">${esc(x.group)} · ${esc(x.service)}${x.time?' · '+esc(x.time):''}</div>${x.reason?'<div class="meta">Motivo: '+esc(x.reason)+'</div>':''}</div><span class="badge ${cls(x.status)}">${x.status}</span></div><div class="actions"><button class="present" onclick="setStatus(${i},'Presente')">✓ Presente</button><button class="absent" onclick="setStatus(${i},'Ausente')">✕ Inasistencia</button><button class="just" onclick="justify(${i})">⚠ Justificar</button>${x.id?`<button class="delete" onclick="removePerson(${i})">Quitar registro</button>`:''}</div></div>`).join('');
+ list.innerHTML=records.map((x,i)=>`<div class="person"><div class="person-top"><div><div class="person-name">${esc(x.name)}</div><div class="meta">${esc(x.group)} · ${esc(x.service)}${x.time?' · '+esc(x.time):''}</div>${x.reason?'<div class="meta">Motivo: '+esc(x.reason)+'</div>':''}</div><span class="badge ${cls(x.status)}">${x.status}</span></div><div class="actions"><button class="present" onclick="setStatus(${i},'Presente')">✓ Presente</button><button class="absent" onclick="setStatus(${i},'Ausente')">✕ Inasistencia</button><button class="just" onclick="justify(${i})">⚠ Justificar</button><button class="delete" onclick="deleteMember(${i})">Eliminar</button></div></div>`).join('');
 }
 
 async function addLocal(){
@@ -726,6 +726,24 @@ async function removePerson(i){
   else{const r=records[i];r.id=null;r.status='Sin registrar';r.reason='';r.time='';localSave();render()}
   notify('Registro eliminado')
  }catch(e){console.error(e);notify('No se pudo eliminar')}
+}
+async function deleteMember(i){
+ const r=records[i];if(!r)return;
+ if(!confirm('¿Eliminar definitivamente a '+r.name+'? También se eliminará todo su historial de asistencia. Esta acción no se puede deshacer.'))return;
+ try{
+  if(isSupabase){
+   const {error:attendanceError}=await supabaseClient.from('asistencias').delete().eq('miembro_id',r.member_id);
+   if(attendanceError)throw attendanceError;
+   const {error:memberError}=await supabaseClient.from('miembros').delete().eq('id',r.member_id);
+   if(memberError)throw memberError;
+   await loadToday();
+  }else{
+   members=members.filter(m=>String(m.id)!==String(r.member_id));
+   records=records.filter(x=>String(x.member_id)!==String(r.member_id));
+   localSave();todayRecordsFromLocal();render();
+  }
+  notify('Miembro eliminado');
+ }catch(e){console.error(e);notify('No se pudo eliminar el miembro. Revisa los permisos de Supabase.')}
 }
 function notify(t){$('toast').textContent=t;$('toast').style.display='block';clearTimeout(window._toast);window._toast=setTimeout(()=>$('toast').style.display='none',1800)}
 $('justifyReason').addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();saveJustification()}});
