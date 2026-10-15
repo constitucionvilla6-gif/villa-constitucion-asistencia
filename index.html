@@ -26,7 +26,7 @@ label{display:block;font-size:12px;font-weight:700;margin:15px 0;color:#556158}i
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:15px 0 20px}.stat{background:#f1eadb;padding:13px;border-radius:14px;border:1px solid #eadfc9}.stat b{font-size:24px;display:block;color:#2b5c45}.stat span{font-size:10px;color:#748078;text-transform:uppercase;letter-spacing:.4px}
 .list-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}.date{font-size:11px;color:#748078}.person{border:1px solid #e8deca;border-radius:17px;padding:16px;margin-bottom:11px;background:#fffefb;box-shadow:0 7px 20px #2d3a2f09;transition:.2s}.person:hover{transform:translateY(-2px);box-shadow:0 12px 28px #2d3a2f15}
 .person-top{display:flex;justify-content:space-between;gap:10px}.person-name{font-weight:800;font-size:15px}.meta{font-size:11px;color:#7b857e;margin-top:5px}.actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}.actions button{font-size:11px;padding:8px 10px;border-radius:9px;cursor:pointer}.present{background:#dff0e5;color:#245d3f}.absent{background:#f5dddd;color:#9a3f3f}.just{background:#f6eacb;color:#7b6221}.late{background:#e2ebf5;color:#45637d}.delete{background:#eeeae3;color:#6b6b67}
-.badge{padding:6px 9px;border-radius:20px;font-size:10px;font-weight:800;white-space:nowrap}.b-present{background:#dff0e5;color:#245d3f}.b-absent{background:#f5dddd;color:#9a3f3f}.b-just{background:#f6eacb;color:#7b6221}.b-late{background:#e2ebf5;color:#45637d}
+.badge{padding:6px 9px;border-radius:20px;font-size:10px;font-weight:800;white-space:nowrap}.b-present{background:#dff0e5;color:#245d3f}.b-absent{background:#f5dddd;color:#9a3f3f}.b-unregistered{background:#f1eee5;color:#756b54}.b-just{background:#f6eacb;color:#7b6221}.b-late{background:#e2ebf5;color:#45637d}
 .empty{text-align:center;padding:42px 15px;color:#89918b;border:1px dashed #d8ceba;border-radius:15px;background:#fffcf5}.toast{position:fixed;right:20px;bottom:20px;background:#1e4938;color:#fff;padding:14px 19px;border-radius:12px;display:none;box-shadow:0 15px 35px #0005;z-index:20}
 .reason{display:none}.reason.show{display:block}
 
@@ -387,7 +387,9 @@ button{border:0}
 
 <script>
 const KEY='villa_constitucion_attendance_v2';
+const MEMBERS_KEY=KEY+'_members';
 let records=[];
+let members=[];
 let supabaseClient=null;
 let isSupabase=false;
 let justifyIndex=null;
@@ -400,12 +402,26 @@ function today(){return new Date().toLocaleDateString('es-SV',{weekday:'long',da
 $('today').textContent=today();$('date2').textContent=today();
 
 function configured(){return window.SUPABASE_CONFIG && window.SUPABASE_CONFIG.url && window.SUPABASE_CONFIG.key && !window.SUPABASE_CONFIG.url.includes('TU_PROYECTO') && !window.SUPABASE_CONFIG.key.includes('TU_CLAVE')}
-function localLoad(){try{records=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){records=[]}}
-function localSave(){localStorage.setItem(KEY,JSON.stringify(records))}
+function localLoad(){
+  try{records=JSON.parse(localStorage.getItem(KEY)||'[]')}catch(e){records=[]}
+  try{members=JSON.parse(localStorage.getItem(MEMBERS_KEY)||'[]')}catch(e){members=[]}
+  // Migración suave: los registros antiguos también se convierten en miembros guardados.
+  if(!members.length && records.length){
+    const seen=new Set();
+    members=records.map((r,i)=>({...r,member_id:r.member_id||('local-'+i)})).filter(r=>{const k=(r.name||'').trim().toLowerCase();if(!k||seen.has(k))return false;seen.add(k);return true;}).map(r=>({id:r.member_id,name:r.name,group:r.group||'Miembro',service:r.service||'Servicio general'}));
+    localStorage.setItem(MEMBERS_KEY,JSON.stringify(members));
+  }
+}
+function localSave(){localStorage.setItem(KEY,JSON.stringify(records));localStorage.setItem(MEMBERS_KEY,JSON.stringify(members))}
+function todayRecordsFromLocal(){
+  const byId=new Map(records.map(r=>[r.member_id||('name:'+String(r.name||'').toLowerCase()),r]));
+  records=members.map(m=>{const r=byId.get(m.id)||byId.get('name:'+String(m.name||'').toLowerCase());return {id:r?.id||null,member_id:m.id,name:m.name,group:m.group||'Miembro',service:m.service||'Servicio general',status:r?.status||'Sin registrar',reason:r?.reason||'',time:r?.time||''};});
+}
 
 async function initApp(){
   if(!configured()){
     localLoad();
+    todayRecordsFromLocal();
     render();
     return;
   }
@@ -440,9 +456,14 @@ async function logout(){if(supabaseClient)await supabaseClient.auth.signOut()}
 
 async function loadToday(){
   const day=new Date().toISOString().slice(0,10);
-  const {data,error}=await supabaseClient.from('asistencias').select('id,estado,motivo,hora,miembro_id,miembros(id,nombre,grupo,servicio)').eq('fecha',day).order('hora',{ascending:false});
-  if(error){console.error(error);notify('No se pudo cargar Supabase');return}
-  records=(data||[]).map(x=>({id:x.id,member_id:x.miembro_id,name:x.miembros?.nombre||'Sin nombre',group:x.miembros?.grupo||'Miembro',service:x.miembros?.servicio||'Servicio general',status:x.estado==='Justificado'?'Justificado':x.estado==='Ausente'?'Ausente':'Presente',reason:x.motivo||'',time:x.hora?new Date(x.hora).toLocaleTimeString('es-SV',{hour:'2-digit',minute:'2-digit'}):''}));
+  const [mr,ar]=await Promise.all([
+    supabaseClient.from('miembros').select('id,nombre,grupo,servicio').order('nombre',{ascending:true}),
+    supabaseClient.from('asistencias').select('id,estado,motivo,hora,miembro_id').eq('fecha',day).order('hora',{ascending:false})
+  ]);
+  if(mr.error||ar.error){console.error(mr.error||ar.error);notify('No se pudo cargar Supabase');return}
+  members=(mr.data||[]).map(m=>({id:m.id,name:m.nombre||'Sin nombre',group:m.grupo||'Miembro',service:m.servicio||'Servicio general'}));
+  const byMember=new Map((ar.data||[]).map(a=>[String(a.miembro_id),a]));
+  records=members.map(m=>{const a=byMember.get(String(m.id));return {id:a?.id||null,member_id:m.id,name:m.name,group:m.group,service:m.service,status:a?(a.estado==='Justificado'?'Justificado':a.estado==='Ausente'?'Ausente':'Presente'):'Sin registrar',reason:a?.motivo||'',time:a?.hora?new Date(a.hora).toLocaleTimeString('es-SV',{hour:'2-digit',minute:'2-digit'}):''}});
   render();
 }
 
@@ -637,21 +658,26 @@ document.addEventListener('keydown',e=>{
 
 function showReason(){const on=$('status').value==='Justificado';$('reasonBox').classList.toggle('show',on);$('reason').required=on}
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-function cls(s){return s==='Presente'?'b-present':s==='Ausente'?'b-absent':'b-just'}
+function cls(s){return s==='Presente'?'b-present':s==='Ausente'?'b-absent':s==='Sin registrar'?'b-unregistered':'b-just'}
 function render(){
  const present=records.filter(x=>x.status==='Presente').length;
  const absent=records.filter(x=>x.status==='Ausente'||x.status==='Justificado').length;
+ const registered=records.filter(x=>x.status!=='Sin registrar').length;
  $('total').textContent=records.length;$('present').textContent=present;$('absent').textContent=absent;
- $('listCount').textContent=records.length+' registro'+(records.length===1?'':'s');
+ $('listCount').textContent=records.length+' miembro'+(records.length===1?'':'s')+' · '+registered+' con registro hoy';
  const list=$('list');
  if(!records.length){list.innerHTML='<div class="empty">No hay miembros registrados todavía.<br><br>Agrega el primero usando el formulario.</div>';return}
- list.innerHTML=records.map((x,i)=>`<div class="person"><div class="person-top"><div><div class="person-name">${esc(x.name)}</div><div class="meta">${esc(x.group)} · ${esc(x.service)} · ${esc(x.time)}</div>${x.reason?'<div class="meta">Motivo: '+esc(x.reason)+'</div>':''}</div><span class="badge ${cls(x.status)}">${x.status}</span></div><div class="actions"><button class="present" onclick="setStatus(${i},'Presente')">✓ Presente</button><button class="absent" onclick="setStatus(${i},'Ausente')">✕ Inasistencia</button><button class="just" onclick="justify(${i})">⚠ Justificar</button><button class="delete" onclick="removePerson(${i})">Eliminar</button></div></div>`).join('');
+ list.innerHTML=records.map((x,i)=>`<div class="person"><div class="person-top"><div><div class="person-name">${esc(x.name)}</div><div class="meta">${esc(x.group)} · ${esc(x.service)}${x.time?' · '+esc(x.time):''}</div>${x.reason?'<div class="meta">Motivo: '+esc(x.reason)+'</div>':''}</div><span class="badge ${cls(x.status)}">${x.status}</span></div><div class="actions"><button class="present" onclick="setStatus(${i},'Presente')">✓ Presente</button><button class="absent" onclick="setStatus(${i},'Ausente')">✕ Inasistencia</button><button class="just" onclick="justify(${i})">⚠ Justificar</button>${x.id?`<button class="delete" onclick="removePerson(${i})">Quitar registro</button>`:''}</div></div>`).join('');
 }
 
 async function addLocal(){
- const name=$('name').value.trim();
- records.unshift({name,group:$('group').value,service:$('service').value,status:$('status').value,reason:$('reason').value.trim(),time:new Date().toLocaleTimeString('es-SV',{hour:'2-digit',minute:'2-digit'})});
- localSave();render();
+ const name=$('name').value.trim(),group=$('group').value,service=$('service').value,status=$('status').value,reason=$('reason').value.trim();
+ let member=members.find(m=>m.name.trim().toLowerCase()===name.toLowerCase());
+ if(!member){member={id:'local-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),name,group,service};members.push(member)}
+ const time=new Date().toLocaleTimeString('es-SV',{hour:'2-digit',minute:'2-digit'});
+ const existing=records.find(r=>r.member_id===member.id);
+ const record={id:existing?.id||('local-att-'+Date.now()),member_id:member.id,name,group,service,status,reason:status==='Justificado'?reason:'',time};
+ records=records.filter(r=>r.member_id!==member.id);records.unshift(record);localSave();todayRecordsFromLocal();render();
 }
 async function addSupabase(){
  const name=$('name').value.trim(), group=$('group').value, service=$('service').value, status=$('status').value, reason=$('reason').value.trim();
@@ -675,8 +701,9 @@ $('form').addEventListener('submit',async function(e){
 
 async function setStatus(i,status){
  try{
-  if(isSupabase){const r=records[i];const {error}=await supabaseClient.from('asistencias').update({estado:status,motivo:null}).eq('id',r.id);if(error)throw error;await loadToday()}
-  else{records[i].status=status;if(status!=='Justificado')records[i].reason='';localSave();render()}
+  const r=records[i];
+  if(isSupabase){const {error}=await supabaseClient.from('asistencias').upsert({miembro_id:r.member_id,fecha:isoToday(),estado:status,motivo:null,hora:new Date().toISOString()},{onConflict:'miembro_id,fecha'});if(error)throw error;await loadToday()}
+  else{r.status=status;if(status!=='Justificado')r.reason='';r.id=r.id||('local-att-'+Date.now());const idx=records.findIndex(x=>x.member_id===r.member_id);if(idx>=0)records[idx]=r;localSave();render()}
   notify(status+' registrado');
  }catch(e){console.error(e);notify('No se pudo actualizar')}
 }
@@ -686,8 +713,9 @@ function closeJustify(){justifyIndex=null;$('justifyOverlay').classList.remove('
 async function saveJustification(){
  if(justifyIndex===null)return;const reason=$('justifyReason').value.trim();if(!reason){$('justifyReason').focus();return}
  try{
-  if(isSupabase){const r=records[justifyIndex];const {error}=await supabaseClient.from('asistencias').update({estado:'Justificado',motivo:reason}).eq('id',r.id);if(error)throw error;await loadToday()}
-  else{records[justifyIndex].status='Justificado';records[justifyIndex].reason=reason;localSave();render()}
+  const r=records[justifyIndex];
+  if(isSupabase){const {error}=await supabaseClient.from('asistencias').upsert({miembro_id:r.member_id,fecha:isoToday(),estado:'Justificado',motivo:reason,hora:new Date().toISOString()},{onConflict:'miembro_id,fecha'});if(error)throw error;await loadToday()}
+  else{r.status='Justificado';r.reason=reason;r.id=r.id||('local-att-'+Date.now());localSave();render()}
   closeJustify();notify('Justificación registrada ✓');
  }catch(e){console.error(e);notify('No se pudo guardar la justificación')}
 }
@@ -695,7 +723,7 @@ async function removePerson(i){
  if(!confirm('¿Eliminar a '+records[i].name+' de la asistencia de hoy?'))return;
  try{
   if(isSupabase){const {error}=await supabaseClient.from('asistencias').delete().eq('id',records[i].id);if(error)throw error;await loadToday()}
-  else{records.splice(i,1);localSave();render()}
+  else{const r=records[i];r.id=null;r.status='Sin registrar';r.reason='';r.time='';localSave();render()}
   notify('Registro eliminado')
  }catch(e){console.error(e);notify('No se pudo eliminar')}
 }
